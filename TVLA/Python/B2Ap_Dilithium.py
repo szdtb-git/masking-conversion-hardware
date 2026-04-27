@@ -6,12 +6,12 @@ import time as tt
 from picosdk.ps5000a import ps5000a as ps
 import matplotlib.pyplot as plt
 from picosdk.functions import adc2mV, assert_pico_ok, mV2adc
-import serial  # 导入模块
+import serial  
 from tqdm import tqdm, trange
 
 
 file_number = 602
-zongshu = 398000
+total = 398000
 numEachFile = 1000
 
 K = 24
@@ -119,20 +119,15 @@ portx = "COM8"
 
 # arr = np.empty((10,))
 bps = 115200
-# 超时设置,None：永远等待操作，0为立即返回请求结果，其他值为等待超时时间(单位为秒）
 timex = 10
-# 打开串口，并得到串口对象
+
 ser = serial.Serial(portx, bps, timeout=timex)
-ser.flushInput()  # 清空缓冲区
-
-# zongshu是总共采集的条数
-# numEachFile是每个文件采集的条数
-# zongshu = 200000
-# numEachFile = 10000
+ser.flushInput()  
 
 
-# zongshu / numEachFile是最终产生的文件数
-for alun in range(0, zongshu // numEachFile):
+
+# total / numEachFile is the total number of files
+for alun in range(0, total // numEachFile):
     fl = open("E:/A2B/LUT_B2Ap_Dilithium_off/data/testdata{0}.txt".format(alun+file_number), "w")
     # ou=np.empty(176,int).astype(np.uint8)
     plain = np.empty(pl*T, int).astype(np.uint8)
@@ -155,7 +150,6 @@ for alun in range(0, zongshu // numEachFile):
         assert_pico_ok(status["runBlock"])
 
         for k in range(T):
-            # 写数据
             counter = np.random.randint(0, 2)
             if counter % 2 == 0:
                 a0 = secrets.randbelow(2**23)
@@ -167,7 +161,7 @@ for alun in range(0, zongshu // numEachFile):
                 plain[6*k+3] = (a >> 24) & 255
                 plain[6*k+4] = (a >> 32) & 255
                 plain[6*k+5] = (a >> 40)
-                fl.write("输入0：")
+                fl.write("input0：")
             else:
                 a0 = secrets.randbelow(2 ** 23)
                 a1 = secrets.randbelow(2 ** 23)
@@ -178,7 +172,7 @@ for alun in range(0, zongshu // numEachFile):
                 plain[6*k+3] = (a >> 24) & 255
                 plain[6*k+4] = (a >> 32) & 255
                 plain[6*k+5] = (a >> 40)
-                fl.write("输入1：")
+                fl.write("input1：")
 
             for i in range(pl):
                 ranaa = hex(plain[6*k+i]).replace('0x', '').zfill(2)
@@ -186,7 +180,7 @@ for alun in range(0, zongshu // numEachFile):
                 fl.write(" ")
 
             fl.write("\n")
-            fl.write("输出：")
+            fl.write("output：")
             fl.write("\n")
 
         for i in range(rl*T):
@@ -279,7 +273,6 @@ for alun in range(0, zongshu // numEachFile):
         newArray = np.array(adc2mVChBMax)
         newArray_TR = np.array(adc2mVChAMax)
 
-        # 变成2维数组，才能append到arr
         newArray_2d = np.reshape(newArray, (1, preTriggerSamples + postTriggerSamples))
         newArray_2d_TR = np.reshape(newArray_TR, (1, preTriggerSamples + postTriggerSamples))
 
@@ -300,10 +293,10 @@ for alun in range(0, zongshu // numEachFile):
 
 
         getBytes=b''
-        count = ser.inWaiting()  # 获取串口缓冲区数据
+        count = ser.inWaiting() 
         while count != pl*T:
             count = ser.inWaiting()
-        getBytes = ser.read(count)  # 读出串口数据
+        getBytes = ser.read(count)
         ser.flushInput()
         ser.flushOutput()
 
@@ -324,7 +317,7 @@ for alun in range(0, zongshu // numEachFile):
     del arr
     del arr_tr
 
-ser.close()  # 关闭串口
+ser.close()
 # Stop the scope
 # handle = chandle
 status["stop"] = ps.ps5000aStop(chandle)

@@ -20,7 +20,7 @@ t_test_file = "E:/A2Bp_Dilithium/result_ttest.py"
 file_url = "E:/A2Bp_Dilithium/"
 trace_file_name = "arrPart"
 
-# 更新均
+
 def update_mean_and_var(old_mean, old_var, old_count, value):
     # value = np.square(value)
     new_mean = old_mean + (value - old_mean) / (old_count + 1)
@@ -29,14 +29,12 @@ def update_mean_and_var(old_mean, old_var, old_count, value):
     return new_mean, new_var
 
 
-# 间或计算
 def t_test():
     arr = np.load(file_url + "chufa/" + trace_file_name + r"{0}.npy".format(BEGIN_FILE_INDEX))
     trace_numbers, sample_numbers = arr.shape
 
     print(trace_numbers, sample_numbers)
 
-    # 初始化数组和计数器
     old_mean_fix = np.zeros(100)
     old_var_fix = np.zeros(100)
     old_mean_rnd = np.zeros(100)
@@ -45,7 +43,6 @@ def t_test():
     fix_count = 0
     rnd_count = 0
 
-    # 间或计算采样点集的均值和方差，总样本数为 file_numbers*trace_numbers
     for j in trange(BEGIN_FILE_INDEX, BEGIN_FILE_INDEX + FILE_NUMBER):
         arr = np.load(file_url + "chufa/" + trace_file_name + r"{0}.npy".format(j))
 
@@ -69,7 +66,6 @@ def t_test():
         f.close()
     # end for
 
-    # 计算t_test
     temp1 = old_mean_fix - old_mean_rnd
     temp2 = (old_var_fix / fix_count) + (old_var_rnd / rnd_count)
     test_result = temp1 / np.sqrt(temp2)
@@ -79,15 +75,13 @@ def t_test():
 
 
 def t_test_function():
-    plt.rcParams['figure.figsize'] = (16.0, 9.0)  # 设置画布尺寸
-    f, ax = plt.subplots(1, 1)  # 划分子图，返回画布和子图片集，用ax[n,c]获取相对位置的子图
-    # ax.set_title('ttest_traces')    # 设置图片名称
-    # 设置横纵坐标名称
+    plt.rcParams['figure.figsize'] = (16.0, 9.0)  
+    f, ax = plt.subplots(1, 1)  
+    # ax.set_title('ttest_traces')   
     ax.set_xlabel("Samples", fontsize=35)
     ax.set_ylabel("t-value", fontsize=35)
     plt.xticks(fontsize=25)
     plt.yticks(fontsize=25)
-    # 绘制平行于x轴的水平参考线(坐标，风格，颜色，线条宽度)，绘制垂直参考线用axvline
     ax.axhline(y=4.5, ls='--', c='red', linewidth=2)
     ax.axhline(y=-4.5, ls='--', c='red', linewidth=2)
 
