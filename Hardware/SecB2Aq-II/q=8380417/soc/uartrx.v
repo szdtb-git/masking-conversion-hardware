@@ -14,7 +14,6 @@ module uartrx # (
     localparam CNT_MAX = CLK_FREQ/BPS - 1;
 
 
-    /*------ rx起始位检验------*/
     reg [1:0] r_rx;
 
     always@(posedge clk or negedge rst_n) begin
@@ -27,7 +26,6 @@ module uartrx # (
     assign nege_rx = !r_rx[0] && r_rx[1];
 
 
-    /*------ 开始、结束信号 ------*/
     reg rx_en;
     wire done_flag;
     assign done_flag = (bps_cnt == CNT_MAX >> 1 && bit_cnt == 9);
@@ -53,10 +51,9 @@ module uartrx # (
     end
 
 
-    /*------ 计数器 ------*/
-    reg [15:0] bps_cnt;       // 时钟计数器，表示1bit数据占用的时钟周期数
-    reg [3:0] bit_cnt;     // 位计数器，表示当前是数据帧的第几位
 
+    reg [15:0] bps_cnt;       
+    reg [3:0] bit_cnt;    
 
     always@(posedge clk or negedge rst_n) begin
         if (!rst_n)
@@ -76,9 +73,8 @@ module uartrx # (
             bit_cnt <= bit_cnt + 1; 
     end
 
-    /*------ 接收数据 ------*/
-    reg [7:0] r_data;  // 存储采样数据
 
+    reg [7:0] r_data;  
     always@(posedge clk or negedge rst_n) begin
         if (!rst_n)
             r_data <= 0;

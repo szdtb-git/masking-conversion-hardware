@@ -14,7 +14,6 @@ module uarttx # (
 
     localparam CNT_MAX = CLK_FREQ/BPS - 1;
 
-    /*------ 开始、结束信号 ------*/
     reg tx_en;
     wire done_flag;
     assign done_flag = (bit_cnt == 9 && bps_cnt == CNT_MAX);
@@ -38,9 +37,9 @@ module uarttx # (
     end 
 
 
-    /*------ 计数器 ------*/
-    reg [9:0] bps_cnt;       // 时钟计数器，表示1bit数据占用的时钟周期数
-    reg [3:0] bit_cnt;  // 数据计数器，表示当前是数据帧的第几位
+
+    reg [9:0] bps_cnt;          
+    reg [3:0] bit_cnt; 
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
@@ -63,9 +62,8 @@ module uarttx # (
     end
 
 
-    /*------ 发送数据 ------*/
+
     reg [7:0] r_data;
-    // 临时存储数据
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
             r_data <= 8'b0;
